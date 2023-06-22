@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveFunction
+public class MoveFunction   // Returns list of legal game moves for piece
 {
     BoardManager board;
     List<MoveData> moves = new List<MoveData>();

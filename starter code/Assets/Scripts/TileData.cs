@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileData
+public class TileData   // This script contains te 2D array of Tile Data and has information about what and where is on the board/tile
 {
     private Vector2 position = Vector2.zero;
     public Vector2 Position

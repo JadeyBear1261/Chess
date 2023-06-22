@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PlayerTeam
+public enum PlayerTeam  // What colour team is playing
 {
     NONE = -1,
     WHITE,
     BLACK,
 };
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour    // This is the main script to run the game
 {
+    Minimax minimax;
+
     BoardManager board;
-    public PlayerTeam playerTurn;
-    bool kingDead = false;
-    public GameObject fromHighlight;
+    public PlayerTeam playerTurn;   // Whose turn it is
+    bool kingDead = false;      // If the king is dead, game over
+    public GameObject fromHighlight;    // Highlight on board to show moves
     public GameObject toHighlight;
 
     private static GameManager instance;    
@@ -34,47 +36,36 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        minimax = Minimax.Instance;
         board = BoardManager.Instance;        
         board.SetupBoard();
     }
 
     private void Update()
     {
-        StartCoroutine(DoAIMove());
+        StartCoroutine(DoAIMove()); // Runs the game itself
     }
 
     IEnumerator DoAIMove()
     {       
-        if(isCoroutineExecuting)
+        if(isCoroutineExecuting)    // Checks if coroutine is already running
             yield break;
 
         isCoroutineExecuting = true;
 
-        if (kingDead)                    
+        if (kingDead)                    // Is the game over? If so console message 
             Debug.Log(playerTurn + " wins!");        
-        else if (!kingDead)
+        else if (!kingDead)     // If not dead, will make move for current playerTurn
         {                     
-            MoveFunction movement = new MoveFunction(board);
-            MoveData move = null;
-            for (int y = 0; y < 8; y++)                
-                for (int x = 0; x < 8; x++)            
-                {
-                    TileData tile = board.GetTileFromBoard(new Vector2(x, y));
-                    if(tile.CurrentPiece != null && tile.CurrentPiece.Team == playerTurn)
-                    {
-                        List<MoveData> pieceMoves = movement.GetMoves(tile.CurrentPiece, tile.Position);
-                        if(pieceMoves.Count > 0)                        
-                            move = pieceMoves[0];                        
-                    }
-                }
+            MoveData move = minimax.GetMove();
         
-            RemoveObject("Highlight");
+            RemoveObject("Highlight");  // Removes previous turn highlight from board and instantiates new for current
             ShowMove(move);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(1);     // Delay in coroutine
             
-            SwapPieces(move);  
-            if(!kingDead)                
+            SwapPieces(move);  // Makes the actual move
+            if(!kingDead)                // Is the game over after this move? If not change player turn to opponent
                 UpdateTurn();     
 
             isCoroutineExecuting = false;                                                                                                         

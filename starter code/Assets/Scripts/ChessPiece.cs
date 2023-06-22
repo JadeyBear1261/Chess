@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChessPiece : MonoBehaviour
+public class ChessPiece : MonoBehaviour     // Piece info of location and movement target
 {
     public enum PieceType
     {
